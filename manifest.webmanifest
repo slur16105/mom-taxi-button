@@ -1,0 +1,18 @@
+{
+  "name": "우리 집 택시",
+  "short_name": "집 택시",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f6f5ef",
+  "theme_color": "#10251b",
+  "lang": "ko",
+  "description": "큰 버튼으로 카카오 T 호출 준비를 돕는 가족용 앱",
+  "icons": [
+    {
+      "src": "./assets/taxi-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

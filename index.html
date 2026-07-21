@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#10251b">
+  <meta name="description" content="큰 버튼으로 카카오 T 호출 준비를 돕는 가족용 앱">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./src/styles.css">
+  <title>우리 집 택시</title>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <p class="eyebrow">우리 집 택시</p>
+      <h1>어디로 가세요?</h1>
+      <p class="subtitle">목적지를 누르면 출발지와 목적지가 복사되고 카카오 T를 엽니다.</p>
+    </header>
+
+    <section id="place-list" class="place-list" aria-label="자주 가는 목적지"></section>
+
+    <section class="secondary-actions" aria-label="기타 기능">
+      <button id="other-place-button" class="secondary-button" type="button">다른 곳 가기</button>
+      <button id="help-button" class="secondary-button" type="button">가족에게 도움 요청</button>
+    </section>
+
+    <section class="notice" aria-label="사용 안내">
+      <strong>사용 방법</strong>
+      <p>카카오 T가 열리면 복사된 주소를 확인하고, 마지막 호출만 직접 눌러 주세요.</p>
+    </section>
+
+    <button id="settings-button" class="text-button" type="button">주소와 목적지 설정</button>
+  </main>
+
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title">
+    <form method="dialog" class="dialog-card">
+      <p class="dialog-kicker">택시 호출 준비</p>
+      <h2 id="confirm-title"></h2>
+      <div id="trip-summary" class="trip-summary"></div>
+      <p class="dialog-help">주소를 복사한 뒤 카카오 T를 열겠습니다. 카카오 T에서 주소를 확인한 후 호출해 주세요.</p>
+      <div class="dialog-actions">
+        <button class="secondary-button" value="cancel">취소</button>
+        <button id="start-kakao-button" class="primary-button" value="start">주소 복사하고 카카오 T 열기</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="settings-dialog" aria-labelledby="settings-title">
+    <form id="settings-form" class="dialog-card">
+      <div class="settings-heading">
+        <div>
+          <p class="dialog-kicker">처음 한 번만 설정</p>
+          <h2 id="settings-title">우리 집과 자주 가는 곳</h2>
+        </div>
+        <button id="close-settings-button" class="icon-button" type="button" aria-label="설정 닫기">×</button>
+      </div>
+      <label>출발지 이름<input name="pickupLabel" required placeholder="예: 우리 집 앞"></label>
+      <label>출발지 주소<input name="pickupAddress" required placeholder="예: ○○아파트 정문"></label>
+      <fieldset>
+        <legend>자주 가는 곳</legend>
+        <div id="destination-fields"></div>
+      </fieldset>
+      <label>도움 요청을 받을 가족 연락처 (선택)<input name="helpContact" type="tel" placeholder="예: 01012345678"></label>
+      <p class="field-hint">개인정보는 이 휴대폰 안에만 저장됩니다.</p>
+      <button class="primary-button" type="submit">저장하기</button>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="./src/app.mjs"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
+    }
+  </script>
+</body>
+</html>
