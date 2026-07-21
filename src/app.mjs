@@ -1,4 +1,4 @@
-import { buildHelpMessage, buildTaxiBrief, normalizePlace, getKakaoTFallbackUrl, getKakaoTLaunchPlan } from './taxi-config.mjs';
+import { buildHelpMessage, buildTaxiBrief, normalizePlace, getKakaoTFallbackUrl, getKakaoTLaunchPlan, getInstallMode } from './taxi-config.mjs';
 
 const STORAGE_KEY = 'mom-taxi-button.settings.v1';
 const DEFAULTS = {
@@ -24,11 +24,34 @@ const elements = {
   closeSettings: document.querySelector('#close-settings-button'),
   otherPlace: document.querySelector('#other-place-button'),
   help: document.querySelector('#help-button'),
+  installDialog: document.querySelector('#install-dialog'),
+  installIosGuide: document.querySelector('#install-ios-guide'),
+  installBrowserGuide: document.querySelector('#install-browser-guide'),
+  installAppButton: document.querySelector('#install-app-button'),
+  continueBrowser: document.querySelector('#continue-browser-button'),
   toast: document.querySelector('#toast'),
 };
 
 let settings = loadSettings();
 let selectedDestination = null;
+let deferredInstallPrompt = null;
+
+function isInstalled() {
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+
+function openInstallGuide() {
+  if (isInstalled() || sessionStorage.getItem('mom-taxi-install-guide-dismissed')) return;
+  const mode = getInstallMode(navigator.userAgent);
+  elements.installIosGuide.hidden = mode !== 'ios-guide';
+  elements.installBrowserGuide.hidden = mode === 'ios-guide';
+  elements.installAppButton.disabled = !deferredInstallPrompt;
+  elements.installDialog.showModal();
+}
+
+function maybeShowInstallGuide() {
+  window.setTimeout(openInstallGuide, 250);
+}
 
 function loadSettings() {
   try {
@@ -188,6 +211,27 @@ elements.otherPlace.addEventListener('click', () => {
   if (label && address) prepareTrip({ label, address });
 });
 elements.help.addEventListener('click', requestHelp);
+elements.continueBrowser.addEventListener('click', () => {
+  sessionStorage.setItem('mom-taxi-install-guide-dismissed', '1');
+  elements.installDialog.close();
+});
+elements.installAppButton.addEventListener('click', async () => {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  elements.installDialog.close();
+});
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  elements.installAppButton.disabled = false;
+});
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  elements.installDialog.close();
+  showToast('홈 화면에 우리 집 택시를 추가했어요.');
+});
 elements.startKakao.addEventListener('click', (event) => { event.preventDefault(); startTrip(); });
 elements.settingsForm.addEventListener('submit', (event) => {
   event.preventDefault();
@@ -206,3 +250,4 @@ elements.settingsForm.addEventListener('submit', (event) => {
 });
 
 render();
+maybeShowInstallGuide();

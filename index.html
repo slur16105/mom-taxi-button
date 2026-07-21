@@ -66,6 +66,27 @@
     </form>
   </dialog>
 
+  <dialog id="install-dialog" aria-labelledby="install-title">
+    <section class="dialog-card install-card">
+      <p class="dialog-kicker">처음 한 번만</p>
+      <h2 id="install-title">홈 화면에 앱처럼 추가하세요</h2>
+      <div id="install-ios-guide" class="install-guide" hidden>
+        <ol>
+          <li>Safari 아래쪽의 <strong>공유 버튼</strong>을 누르세요.</li>
+          <li><strong>홈 화면에 추가</strong>를 누르세요.</li>
+          <li>오른쪽 위 <strong>추가</strong>를 누르세요.</li>
+        </ol>
+        <p>다음부터는 홈 화면의 <strong>우리 집 택시</strong> 아이콘을 누르면 됩니다.</p>
+      </div>
+      <div id="install-browser-guide" class="install-guide" hidden>
+        <p>아래 버튼을 누르면 이 휴대폰 홈 화면에 앱처럼 설치할 수 있습니다.</p>
+        <button id="install-app-button" class="primary-button" type="button">홈 화면에 앱으로 설치</button>
+        <p class="field-hint">버튼이 비활성화되면 Chrome 메뉴 ⋮에서 <strong>홈 화면에 추가</strong>를 선택해 주세요.</p>
+      </div>
+      <button id="continue-browser-button" class="text-button" type="button">지금은 페이지로 보기</button>
+    </section>
+  </dialog>
+
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script type="module" src="./src/app.mjs"></script>
   <script>

@@ -35,6 +35,10 @@ export function getKakaoTFallbackUrl() {
   return 'market://details?id=com.kakao.taxi';
 }
 
+export function getInstallMode(userAgent = '') {
+  return /iPhone|iPad|iPod/i.test(userAgent) ? 'ios-guide' : 'browser-prompt';
+}
+
 export function getKakaoTLaunchPlan(userAgent = '') {
   if (/iPhone|iPad|iPod/i.test(userAgent)) return { type: 'manual' };
   return {
