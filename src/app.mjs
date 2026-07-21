@@ -1,4 +1,4 @@
-import { buildHelpMessage, buildTaxiBrief, normalizePlace, getKakaoTFallbackUrl } from './taxi-config.mjs';
+import { buildHelpMessage, buildTaxiBrief, normalizePlace, getKakaoTFallbackUrl, getKakaoTLaunchPlan } from './taxi-config.mjs';
 
 const STORAGE_KEY = 'mom-taxi-button.settings.v1';
 const DEFAULTS = {
@@ -135,18 +135,22 @@ async function copyText(text) {
 
 function openKakaoT() {
   // Official public route parameters for a personal taxi call are not available.
-  // This only asks Android to open the installed Kakao T app; the user confirms the call inside it.
-  const appIntent = 'intent://open/#Intent;scheme=kakaot;package=com.kakao.taxi;end';
-  const fallback = getKakaoTFallbackUrl();
+  // On iPhone, Safari safely hands off after copying rather than relying on an undocumented app link.
+  const plan = getKakaoTLaunchPlan(navigator.userAgent);
+  if (plan.type === 'manual') {
+    showToast('주소를 복사했어요. 이제 카카오 T 앱을 열고 붙여넣어 주세요.');
+    return;
+  }
+
   const startedAt = Date.now();
-  window.location.href = appIntent;
+  window.location.href = plan.url;
   window.setTimeout(() => {
     if (document.visibilityState === 'visible' && Date.now() - startedAt > 700) {
       showToast('카카오 T가 열리지 않으면 홈 화면에서 카카오 T를 직접 눌러 주세요.');
     }
   }, 900);
-  // Market URL is intentionally not opened automatically: the installed app may have launched.
-  window.__momTaxiStoreFallback = fallback;
+  // Kept for a future explicit Store-install button; never opened automatically.
+  window.__momTaxiStoreFallback = getKakaoTFallbackUrl();
 }
 
 async function startTrip() {

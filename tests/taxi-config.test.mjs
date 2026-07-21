@@ -5,6 +5,7 @@ import {
   buildTaxiBrief,
   buildHelpMessage,
   getKakaoTFallbackUrl,
+  getKakaoTLaunchPlan,
 } from '../src/taxi-config.mjs';
 
 test('normalizePlace trims required address fields', () => {
@@ -38,8 +39,16 @@ test('buildHelpMessage includes the requested destination and copyable pickup', 
 });
 
 test('getKakaoTFallbackUrl uses the Kakao T Play Store listing', () => {
-  assert.equal(
-    getKakaoTFallbackUrl(),
-    'market://details?id=com.kakao.taxi',
-  );
+  assert.equal(getKakaoTFallbackUrl(), 'market://details?id=com.kakao.taxi');
+});
+
+test('getKakaoTLaunchPlan gives iPhone a safe manual handoff', () => {
+  const plan = getKakaoTLaunchPlan('Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15');
+  assert.deepEqual(plan, { type: 'manual' });
+});
+
+test('getKakaoTLaunchPlan uses Android app intent', () => {
+  const plan = getKakaoTLaunchPlan('Mozilla/5.0 (Linux; Android 15; Pixel) AppleWebKit/537.36');
+  assert.equal(plan.type, 'android-intent');
+  assert.match(plan.url, /package=com\.kakao\.taxi/);
 });

@@ -34,3 +34,11 @@ export function buildHelpMessage(pickup, destination) {
 export function getKakaoTFallbackUrl() {
   return 'market://details?id=com.kakao.taxi';
 }
+
+export function getKakaoTLaunchPlan(userAgent = '') {
+  if (/iPhone|iPad|iPod/i.test(userAgent)) return { type: 'manual' };
+  return {
+    type: 'android-intent',
+    url: 'intent://open/#Intent;scheme=kakaot;package=com.kakao.taxi;end',
+  };
+}
